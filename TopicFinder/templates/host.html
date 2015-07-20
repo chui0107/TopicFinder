@@ -23,14 +23,12 @@
   		{% if response.topics != none %}
   		
   		{% for topics,messages in response.topics.items %}
-  			<strong>{{topics}}:</strong>
-  			<br>
-  			<ul>
-  			{% for message in messages %}
-  			<li><a href={{ message.1 }}>{{ message.0 }}</a></li>
-  			{% endfor %}
-    		</ul>
-    		<br>
+  		<strong>{{topics}}:</strong>
+  		<ul>
+  		{% for message in messages %}
+  		<li><a href={{ message.1 }}>{{ message.0 }}</a></li>
+  		{% endfor %}
+    	</ul>
     	
     	{% endfor %}
     	
