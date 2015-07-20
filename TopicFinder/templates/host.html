@@ -10,7 +10,38 @@
   </head>
 
   <body>
-
+  
+  		<form id = "searchForm" method="GET" action="{% url 'search' %}">
+  		{% csrf_token %}
+  		Enter a Topic:
+  		<input type="text" name="topic">
+  		<input type="submit" value="Search">
+  		</form>
+  		
+  		{% if response.status == 1 %}
+  		
+  		{% if response.topics != none %}
+  		
+  		{% for topics,messages in response.topics.items %}
+  			<strong>{{topics}}:</strong>
+  			<br>
+  			<ul>
+  			{% for message in messages %}
+  			<li>{{ message }}</li>    		
+    		{% endfor %}
+    		</ul>
+    		<br>
+    	
+    	{% endfor %}
+    	
+    	{% endif %}
+  			
+    	{% else %}
+    		<strong>server error:</strong>
+    		<br>
+    		<strong>{{ response.message }}</strong>
+    	{% endif %}
+  		
   <div class="container">
 
   </div>

@@ -19,5 +19,6 @@ from django.contrib import admin
 urlpatterns = [
 			
 	url(r'^$', 'TopicFinder.views.ShowMain', name='home'),
+	url(r'^/search$', 'TopicFinder.views.SearchTopic', name='search'),
     url(r'^admin/', include(admin.site.urls)),
 ]
