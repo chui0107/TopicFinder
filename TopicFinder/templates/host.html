@@ -27,8 +27,8 @@
   			<br>
   			<ul>
   			{% for message in messages %}
-  			<li>{{ message }}</li>    		
-    		{% endfor %}
+  			<li><a href={{ message.1 }}>{{ message.0 }}</a></li>
+  			{% endfor %}
     		</ul>
     		<br>
     	
