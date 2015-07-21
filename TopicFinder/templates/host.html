@@ -20,19 +20,33 @@
   		
   		{% if response.status == 1 %}
   		
-  		{% if response.topics != none %}
+  		<strong>Wiki:</strong>
+  		<br>
+  		{% if response.topics.wiki != None %}
+  			<ul>
+  			{% for message in response.topics.wiki %}
+  			<li><a href={{ message.1 }}>{{ message.0 }}</a></li>
+  			{% endfor %}
+    		</ul>
+    	{% else %}
+    		<strong>{{ response.message }}</strong>
+    		<br>
+    		<br>
+  		{% endif %}
+  		<br>
   		
-  		{% for topics,messages in response.topics.items %}
-  		<strong>{{topics}}:</strong>
-  		<ul>
-  		{% for message in messages %}
-  		<li><a href={{ message.1 }}>{{ message.0 }}</a></li>
-  		{% endfor %}
-    	</ul>
-    	
-    	{% endfor %}
-    	
-    	{% endif %}
+  		<strong>Twitter:</strong>
+  		<br>
+  		{% if response.topics.twitter != None %}
+  			<ul>
+  			{% for message in response.topics.twitter %}
+  			<li><a href={{ message.1 }}>{{ message.0 }}</a></li>
+  			{% endfor %}
+    		</ul>
+    	{% else %}
+    		<strong>{{ response.message }}</strong>
+    		<br>
+  		{% endif %}
   			
     	{% else %}
     		<strong>server error:</strong>

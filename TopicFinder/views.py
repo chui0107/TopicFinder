@@ -4,8 +4,8 @@ import URLregex
 import re
 
 def Search(topic, result):
-	
-	status = True
+	status = 1
+	result = result["topics"]	
 	wiki = "https://en.wikipedia.org/w/api.php"
 	params = {'action' : 'opensearch', 'search':topic}
 	r = requests.get(wiki, params=params)
@@ -14,11 +14,10 @@ def Search(topic, result):
 		response = r.json()
 		result['wiki'] = zip(response[1], response[3])
 	else:
-		status = False
+		status = 0
 	
 	headers = {'Authorization': 'Basic VkxXMGZod3FBYmliVVNTYmNlNTd4Q1JTSjowajJtWVZ4eGRXZ3hHaDczWm9INEVuMnNCTVB0SDNkRzQ5bDk5YzdHQktQd0Q4Vm1TVw==', 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}	
-	twitter = 'https://api.twitter.com/oauth2/token'
-	# append to the body of the request	
+	twitter = 'https://api.twitter.com/oauth2/token'	
 	data = {'grant_type':'client_credentials'}
 	
 	r = requests.post(twitter, headers=headers, data=data, params=params)
@@ -46,10 +45,11 @@ def Search(topic, result):
 					
 				result['twitter'] = zip(tweets, urls)
 				return status
-			
-	status = False			
+	
+	status = 0
 	return status
-
+	
+	
 def ShowMain(request):
 	response = {"status" : 1, "message" : None , "topics" : None}
 	return render(request, 'host.html', {'response': response})
@@ -64,19 +64,11 @@ def SearchTopic(request):
 			response["message"] = "Topic can't be none"
 			return render(request, 'host.html', {'response': response})
 		
-		result = {'wiki':[], 'twitter':[]}
-		status = Search(topic, result)
-		if status:
-			response["status"] = 1
-			response["topics"] = result
-		else:
-			message = 'A problem has occurred when connecting to '
-			if len(result['wiki']) == 0:
-				message += 'wikipedia '
-			if len(result['twitter']) == 0:
-				message += ' twitter'
-			response["message"] = message	
-		
+		response["topics"] = {'wiki':None, 'twitter':None} 
+		status = Search(topic, response)
+		if status == 0:
+			response['message'] = 'An error has occurred'
+		response["status"] = 1	
 		return render(request, 'host.html', {'response': response})
 	
 	response["message"] = "This page can only accept GET request for now"
