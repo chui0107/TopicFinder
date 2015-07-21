@@ -3,10 +3,12 @@ import requests
 import URLregex
 import re
 
-def Search(topic, result):
-	status = 1
+TestMode = False
+
+def Search(topic, apis, result):
+	status = True
 	result = result["topics"]	
-	wiki = "https://en.wikipedia.org/w/api.php"
+	wiki = apis[0]
 	params = {'action' : 'opensearch', 'search':topic}
 	r = requests.get(wiki, params=params)
 	
@@ -14,10 +16,10 @@ def Search(topic, result):
 		response = r.json()
 		result['wiki'] = zip(response[1], response[3])
 	else:
-		status = 0
+		status = False
 	
 	headers = {'Authorization': 'Basic VkxXMGZod3FBYmliVVNTYmNlNTd4Q1JTSjowajJtWVZ4eGRXZ3hHaDczWm9INEVuMnNCTVB0SDNkRzQ5bDk5YzdHQktQd0Q4Vm1TVw==', 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}	
-	twitter = 'https://api.twitter.com/oauth2/token'	
+	twitter = apis[1]	
 	data = {'grant_type':'client_credentials'}
 	
 	r = requests.post(twitter, headers=headers, data=data, params=params)
@@ -46,7 +48,7 @@ def Search(topic, result):
 				result['twitter'] = zip(tweets, urls)
 				return status
 	
-	status = 0
+	status = False
 	return status
 	
 	
@@ -57,6 +59,7 @@ def ShowMain(request):
 def SearchTopic(request):
 
 	response = {"status" : 0, "message" : None , "topics" : None}
+					
 	if request.method == 'GET':
 		
 		topic = request.GET["topic"]
@@ -64,13 +67,47 @@ def SearchTopic(request):
 			response["message"] = "Topic can't be none"
 			return render(request, 'host.html', {'response': response})
 		
-		response["topics"] = {'wiki':None, 'twitter':None} 
-		status = Search(topic, response)
-		if status == 0:
-			response['message'] = 'An error has occurred'
-		response["status"] = 1	
-		return render(request, 'host.html', {'response': response})
+		response["topics"] = {'wiki':None, 'twitter':None}
+		
+		global TestMode
+		if TestMode == False:
+			apis = ['https://en.wikipedia.org/w/api.php', 'https://api.twitter.com/oauth2/token']
+			status = Search(topic, apis, response)
+			if status == False:
+				response['message'] = 'An error has occurred'
+			response["status"] = 1
+			print 'haha'
+			return render(request, 'host.html', {'response': response})
 	
+		else:
+			testResult = True
+			# test set 1
+			apis = ['https://en.wikipedia.org/w/api1.php', 'https://api.twitter.com/oauth2/token1']
+			testResult &= (Search(topic, apis, response) == False)
+			if testResult == False:
+				print 'TestSet1 failed'
+			# test set 2
+			apis = ['https://en.wikipedia.org/w/api.php', 'https://api.twitter.com/oauth2/token1']
+			testResult &= (Search(topic, apis, response) == False)
+			if testResult == False:
+				print 'TestSet2 failed'
+			
+			# test set 3
+			apis = ['https://en.wikipedia.org/w/api1.php', 'https://api.twitter.com/oauth2/token']
+			testResult &= (Search(topic, apis, response) == False)
+			if testResult == False:
+				print 'TestSet3 failed'
+			
+			# test set 4
+			apis = ['https://en.wikipedia.org/w/api.php', 'https://api.twitter.com/oauth2/token']
+			testResult &= (Search(topic, apis, response) == True)
+			if testResult == False:
+				print 'TestSet4 failed'
+				
+			print 'Passed all tests'
+			response["message"] = 'testing mode'
+			return render(request, 'host.html', {'response': response})
+		
 	response["message"] = "This page can only accept GET request for now"
 	return render(request, 'host.html', {'response': response})
 	
