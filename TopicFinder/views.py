@@ -76,7 +76,6 @@ def SearchTopic(request):
 			if status == False:
 				response['message'] = 'An error has occurred'
 			response["status"] = 1
-			print 'haha'
 			return render(request, 'host.html', {'response': response})
 	
 		else:
@@ -104,7 +103,9 @@ def SearchTopic(request):
 			if testResult == False:
 				print 'TestSet4 failed'
 				
-			print 'Passed all tests'
+			if testResult:
+				print 'Passed all tests'
+				
 			response["message"] = 'testing mode'
 			return render(request, 'host.html', {'response': response})
 		
