@@ -18,6 +18,7 @@ def Search(topic, apis, result):
 	else:
 		status = False
 	
+	# https://dev.twitter.com/oauth/application-only
 	headers = {'Authorization': 'Basic VkxXMGZod3FBYmliVVNTYmNlNTd4Q1JTSjowajJtWVZ4eGRXZ3hHaDczWm9INEVuMnNCTVB0SDNkRzQ5bDk5YzdHQktQd0Q4Vm1TVw==', 'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}	
 	twitter = apis[1]	
 	data = {'grant_type':'client_credentials'}
@@ -31,6 +32,8 @@ def Search(topic, apis, result):
 			twitter = 'https://api.twitter.com/1.1/search/tweets.json'
 			params = {'q': topic, 'lang':'en'}
 			headers = {'Authorization':'Bearer ' + token}
+			
+			# two steps before sending out requests
 			r = requests.get(twitter, params=params, headers=headers)
 			
 			if r.status_code == 200:
